@@ -57,11 +57,11 @@ shared_letter_id = query_params.get("letter_id", None)
   #  st.stop()
 
 
-st.sidebar.title("📮 Slow Letter")
-st.sidebar.success(f"{st.user.name}님 로그인 중")
+#st.sidebar.title("📮 Slow Letter")
+#st.sidebar.success(f"{st.user.name}님 로그인 중")
 
-if st.sidebar.button("로그아웃"):
-    st.logout()
+#if st.sidebar.button("로그아웃"):
+    #st.logout()
 
 
 page = st.sidebar.radio(
