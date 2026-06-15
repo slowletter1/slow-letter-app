@@ -1,7 +1,7 @@
 import streamlit as st
+from datetime import date
 import uuid
 from supabase import create_client
-
 
 
 supabase = create_client(
