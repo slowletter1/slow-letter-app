@@ -176,60 +176,6 @@ def show_letter_page():
 
             st.caption("상대방에게 이 링크를 보내면 앱 없이도 편지를 확인할 수 있습니다.")
 
-    st.divider()
-
-    st.subheader("🔒 잠긴 편지함")
-
-    letters = load_letters_from_supabase()
-
-    if not letters:
-        st.caption("아직 보관된 편지가 없습니다.")
-        return
-
-    st.caption(f"총 {len(letters)}개의 편지가 보관되어 있습니다.")
-
-    today = date.today()
-
-    locked_letters = []
-    opened_letters = []
-
-    for letter in letters:
-        open_day = datetime.strptime(letter["open_date"], "%Y-%m-%d").date()
-
-        if open_day > today:
-            locked_letters.append(letter)
-        else:
-            opened_letters.append(letter)
-
-    if not locked_letters:
-        st.caption("잠긴 편지가 없습니다.")
-
-    for letter in locked_letters:
-        open_day = datetime.strptime(letter["open_date"], "%Y-%m-%d").date()
-        d_day = (open_day - today).days
-
-        st.info(
-            f"🔒 **{d_day}일 후 개봉**\n\n"
-            f"To. {letter['receiver']}\n\n"
-            f"제목: {letter['title']}\n\n"
-            f"📅 {letter['open_date']}\n\n"
-            f"기다림이 선물이 됩니다."
-        )
-
-    st.divider()
-
-    st.subheader("✉ 열린 편지함")
-
-    if not opened_letters:
-        st.caption("아직 열린 편지가 없습니다.")
-
-    for letter in opened_letters:
-        with st.expander(f"✉ 개봉된 편지 · {letter['title']}"):
-            st.write(f"To. {letter['receiver']}")
-            st.write(f"작성일: {letter.get('created_at', '알 수 없음')}")
-            st.divider()
-            st.write(letter["content"])
-
-
+   
 if __name__ == "__main__":
     show_letter_page()
