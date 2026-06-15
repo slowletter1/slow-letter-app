@@ -125,7 +125,7 @@ def show_letter_page():
         f"편지 ID\n"
         f"{preview_letter_id}\n\n"
         f"앱에서 확인해 보세요.\n\n"
-        f"http://localhost:8501/?letter_id=********"
+        f"http://slow-letter-app-cgw2dfczedxrtw7r3nocvz.streamlit.app/?letter_id=********"
     )
 
     st.info(
@@ -136,7 +136,7 @@ def show_letter_page():
         f"편지 ID\n"
         f"{preview_letter_id}\n\n"
         f"지금 앱에서 확인해 보세요.\n\n"
-        f"http://localhost:8501/?letter_id=********"
+        f"http://slow-letter-app-cgw2dfczedxrtw7r3nocvz.streamlit.app/?letter_id=********"
     )
 
     if st.button("📮 봉투에 담아 보내기"):
@@ -166,7 +166,7 @@ def show_letter_page():
             )
 
             st.code(
-                f"http://localhost:8501/?letter_id={letter_id}",
+                f"http://slow-letter-app-cgw2dfczedxrtw7r3nocvz.streamlit.app/?letter_id={letter_id}",
                 language="text"
             )
 
