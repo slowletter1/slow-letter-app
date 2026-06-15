@@ -206,14 +206,18 @@ def show_letter_page():
             )
 
             share_url = f"https://slow-letter-app-cgw2dfczedxrtw7r3nocvz.streamlit.app/?letter_id={letter['letter_id']}"
-            share_url = f"https://slow-letter-app-cgw2dfczedxrtw7r3nocvz.streamlit.app/?letter_id={letter['letter_id']}"
-
-            st.link_button(
-                "💬 편지 링크 열기",
-                share_url
-            )
-
-            st.code(share_url, language="text")
         
+            st.markdown("### 🔗 카카오톡 · 인스타그램으로 공유하기")
+
+    st.caption(
+        "아래 링크를 복사해서 카카오톡이나 인스타그램 DM으로 보내주세요."
+    )
+
+    st.link_button(
+        "💬 공유 링크 열기",
+        share_url
+    )
+
+    st.code(share_url, language="text")
 if __name__ == "__main__":
     show_letter_page()
