@@ -47,14 +47,14 @@ query_params = st.query_params
 shared_letter_id = query_params.get("letter_id", None)
 
 
-if not st.user.is_logged_in:
-    st.title("📮 Slow Letter")
-    st.write("Google 계정으로 로그인하세요.")
+#if not st.user.is_logged_in:
+   # st.title("📮 Slow Letter")
+  #  st.write("Google 계정으로 로그인하세요.")
 
-    if st.button("Google 로그인"):
-        st.login()
+  #  if st.button("Google 로그인"):
+   #     st.login()
 
-    st.stop()
+  #  st.stop()
 
 
 st.sidebar.title("📮 Slow Letter")
