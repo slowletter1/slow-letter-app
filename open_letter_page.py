@@ -1,7 +1,28 @@
 import streamlit as st
 from datetime import date, datetime
-import json
-import os
+from supabase import create_client
+
+
+supabase = create_client(
+    st.secrets["SUPABASE_URL"],
+    st.secrets["SUPABASE_KEY"]
+)
+
+
+def find_letter_by_id(letter_id):
+    response = (
+        supabase
+        .table("letters")
+        .select("*")
+        .eq("letter_id", letter_id)
+        .execute()
+    )
+
+    if response.data:
+        return response.data[0]
+
+    return None
+
 
 def load_open_letter_css():
     st.markdown("""
@@ -15,7 +36,7 @@ def load_open_letter_css():
 
     .block-container {
         max-width: 480px;
-        padding-top: 28px;
+        padding-top: 5rem;
     }
 
     label, p, span, h1, h2, h3 {
@@ -24,29 +45,10 @@ def load_open_letter_css():
     </style>
     """, unsafe_allow_html=True)
 
-LETTER_FILE = "letters.json"
-
-
-def load_letters():
-    if not os.path.exists(LETTER_FILE):
-        return []
-
-    with open(LETTER_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-def find_letter_by_id(letter_id):
-    letters = load_letters()
-
-    for letter in letters:
-        if letter.get("letter_id") == letter_id:
-            return letter
-
-    return None
-
 
 def show_open_letter_page(letter_id):
     load_open_letter_css()
+
     st.title("📮 Slow Letter")
 
     letter = find_letter_by_id(letter_id)

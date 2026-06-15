@@ -1,24 +1,28 @@
 import streamlit as st
 from datetime import date, datetime
-import json
-import os
 import uuid
+from supabase import create_client
 
 
-LETTER_FILE = "letters.json"
+supabase = create_client(
+    st.secrets["SUPABASE_URL"],
+    st.secrets["SUPABASE_KEY"]
+)
 
 
-def load_letters():
-    if not os.path.exists(LETTER_FILE):
-        return []
-
-    with open(LETTER_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+def save_letter_to_supabase(letter):
+    supabase.table("letters").insert(letter).execute()
 
 
-def save_letters(letters):
-    with open(LETTER_FILE, "w", encoding="utf-8") as f:
-        json.dump(letters, f, ensure_ascii=False, indent=2)
+def load_letters_from_supabase():
+    response = (
+        supabase
+        .table("letters")
+        .select("*")
+        .order("created_at", desc=True)
+        .execute()
+    )
+    return response.data
 
 
 def load_letter_css():
@@ -87,14 +91,15 @@ def show_letter_page():
     st.subheader("✉ 잠긴 편지 작성")
 
     sender = st.text_input("보내는 사람", placeholder="내 이름 또는 닉네임")
-    receiver = st.text_input("받는 사람", placeholder="미래의 나, 친구, 연인, 가족", key="receiver")
-    receiver_contact = st.text_input(
-    "받는 사람 연락처",
-    placeholder="010-0000-0000"
-)
-    open_date = st.date_input("열리는 날짜", value=date.today(), key="open_date")
-    title = st.text_input("편지 제목", placeholder="오늘의 마음을 한 줄로 적어보세요", key="title")
-    content = st.text_area("편지 내용", placeholder="지금의 감정, 다짐, 고마움, 후회를 천천히 적어보세요.", key="content")
+    receiver = st.text_input("받는 사람", placeholder="미래의 나, 친구, 연인, 가족")
+    receiver_contact = st.text_input("받는 사람 연락처", placeholder="010-0000-0000")
+    open_date = st.date_input("열리는 날짜", value=date.today())
+    title = st.text_input("편지 제목", placeholder="오늘의 마음을 한 줄로 적어보세요")
+    content = st.text_area(
+        "편지 내용",
+        placeholder="지금의 감정, 다짐, 고마움, 후회를 천천히 적어보세요."
+    )
+
     st.info(
         f"📩 알림 미리보기\n\n"
         f"{sender if sender else '000'}님이 진심을 담은 편지를 보냈습니다.\n\n"
@@ -128,35 +133,32 @@ def show_letter_page():
         f"{sender if sender else '000'}님이 보낸 편지를 열 수 있습니다.\n\n"
         f"제목\n"
         f"『{title if title else '제목 없음'}』\n\n"
-        f"편지 ID/n"
-        f"{preview_letter_id}"
-        f"지금 앱에서 확인해 보세요."
+        f"편지 ID\n"
+        f"{preview_letter_id}\n\n"
+        f"지금 앱에서 확인해 보세요.\n\n"
         f"http://localhost:8501/?letter_id=********"
     )
+
     if st.button("📮 봉투에 담아 보내기"):
         if not sender or not receiver or not title or not content:
-            st.warning("보내는 사람,받는 사람, 제목, 편지 내용을 모두 입력해주세요.")
+            st.warning("보내는 사람, 받는 사람, 제목, 편지 내용을 모두 입력해주세요.")
         else:
-            letters = load_letters()
             letter_id = str(uuid.uuid4())[:8]
+
             new_letter = {
                 "sender": sender,
                 "receiver": receiver,
                 "receiver_contact": receiver_contact,
-
                 "letter_id": letter_id,
-
                 "open_date": str(open_date),
                 "title": title,
                 "content": content,
-                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             }
 
-            letters.append(new_letter)
-            save_letters(letters)
-            
+            save_letter_to_supabase(new_letter)
+
             st.success("편지가 잠긴 봉투에 보관되었습니다.")
-           
+
             st.info(
                 f"📮 공유용 편지 ID\n\n"
                 f"{letter_id}\n\n"
@@ -166,23 +168,24 @@ def show_letter_page():
             st.code(
                 f"http://localhost:8501/?letter_id={letter_id}",
                 language="text"
-)
-            st.link_button(
-    st.info("카카오톡 공유 버튼은 실제 배포 도메인 연결 후 Kakao Developers 설정으로 붙일 예정입니다.")
-)
-            st.caption(
-    "상대방에게 이 링크를 보내면 앱 없이도 편지를 확인할 수 있습니다."
-)
-            
+            )
+
+            st.info(
+                "카카오톡 공유 버튼은 실제 배포 도메인 연결 후 Kakao Developers 설정으로 붙일 예정입니다."
+            )
+
+            st.caption("상대방에게 이 링크를 보내면 앱 없이도 편지를 확인할 수 있습니다.")
 
     st.divider()
 
     st.subheader("🔒 잠긴 편지함")
-    letters = load_letters()
+
+    letters = load_letters_from_supabase()
 
     if not letters:
         st.caption("아직 보관된 편지가 없습니다.")
         return
+
     st.caption(f"총 {len(letters)}개의 편지가 보관되어 있습니다.")
 
     today = date.today()
@@ -197,10 +200,11 @@ def show_letter_page():
             locked_letters.append(letter)
         else:
             opened_letters.append(letter)
+
     if not locked_letters:
         st.caption("잠긴 편지가 없습니다.")
 
-    for letter in reversed(locked_letters):
+    for letter in locked_letters:
         open_day = datetime.strptime(letter["open_date"], "%Y-%m-%d").date()
         d_day = (open_day - today).days
 
@@ -219,12 +223,13 @@ def show_letter_page():
     if not opened_letters:
         st.caption("아직 열린 편지가 없습니다.")
 
-    for letter in reversed(opened_letters):
+    for letter in opened_letters:
         with st.expander(f"✉ 개봉된 편지 · {letter['title']}"):
             st.write(f"To. {letter['receiver']}")
-            st.write(f"작성일: {letter['created_at']}")
+            st.write(f"작성일: {letter.get('created_at', '알 수 없음')}")
             st.divider()
             st.write(letter["content"])
+
 
 if __name__ == "__main__":
     show_letter_page()
