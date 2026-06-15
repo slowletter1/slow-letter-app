@@ -185,11 +185,7 @@ def show_letter_page():
                 language="text"
             )
 
-            st.info(
-                "카카오톡 공유 버튼은 실제 배포 도메인 연결 후 Kakao Developers 설정으로 붙일 예정입니다."
-            )
-
-            st.caption("상대방에게 이 링크를 보내면 앱 없이도 편지를 확인할 수 있습니다.")
+            st.caption("상대방에게 이 링크를 보내면 편지를 확인할 수 있습니다.")
 
     st.divider()
 
@@ -210,43 +206,14 @@ def show_letter_page():
             )
 
             share_url = f"https://slow-letter-app-cgw2dfczedxrtw7r3nocvz.streamlit.app/?letter_id={letter['letter_id']}"
+            share_url = f"https://slow-letter-app-cgw2dfczedxrtw7r3nocvz.streamlit.app/?letter_id={letter['letter_id']}"
 
-            components.html(
-                f"""
-                <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-
-                <button onclick="shareKakao_{letter['letter_id']}()"
-                    style="
-                        background-color:#FEE500;
-                        color:#000000;
-                        border:none;
-                        border-radius:10px;
-                        padding:10px 16px;
-                        font-weight:bold;
-                        cursor:pointer;
-                        width:100%;
-                    ">
-                    💬 카카오톡으로 공유하기
-                </button>
-
-                <script>
-                    if (!Kakao.isInitialized()) {{
-                        Kakao.init("5a65deb05e055d492b1ffbbcfc89d1ff");
-                    }}
-
-                    function shareKakao_{letter['letter_id']}() {{
-                        Kakao.Share.sendDefault({{
-                            objectType: 'text',
-                            text: '📮 Slow Letter가 도착했습니다.\\n\\n개봉일: {letter["open_date"]}\\n편지 ID: {letter["letter_id"]}',
-                            link: {{
-                                mobileWebUrl: '{share_url}',
-                                webUrl: '{share_url}'
-                            }}
-                        }});
-                    }}
-                </script>
-                """,
-                height=70,
+            st.link_button(
+                "💬 편지 링크 열기",
+                share_url
             )
+
+            st.code(share_url, language="text")
+        
 if __name__ == "__main__":
     show_letter_page()
