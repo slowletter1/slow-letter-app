@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import date, datetime
 import uuid
 from supabase import create_client
+import streamlit.components.v1 as components
 
 
 supabase = create_client(
@@ -24,6 +25,17 @@ def load_letters_from_supabase():
     )
     return response.data
 
+def load_my_sent_letters():
+    response = (
+        supabase
+        .table("letters")
+        .select("*")
+        .eq("sender_email", st.user.email)
+        .order("created_at", desc=True)
+        .execute()
+    )
+
+    return response.data
 
 def load_letter_css():
     st.markdown("""
@@ -140,6 +152,7 @@ def show_letter_page():
     )
 
     if st.button("📮 봉투에 담아 보내기"):
+        
         if not sender or not receiver or not title or not content:
             st.warning("보내는 사람, 받는 사람, 제목, 편지 내용을 모두 입력해주세요.")
         else:
@@ -147,6 +160,7 @@ def show_letter_page():
 
             new_letter = {
                 "sender": sender,
+                "sender_email": st.user.email,
                 "receiver": receiver,
                 "receiver_contact": receiver_contact,
                 "letter_id": letter_id,
@@ -154,6 +168,7 @@ def show_letter_page():
                 "title": title,
                 "content": content,
             }
+
 
             save_letter_to_supabase(new_letter)
 
@@ -166,7 +181,7 @@ def show_letter_page():
             )
 
             st.code(
-                f"http://slow-letter-app-cgw2dfczedxrtw7r3nocvz.streamlit.app/?letter_id={letter_id}",
+                f"https://slow-letter-app-cgw2dfczedxrtw7r3nocvz.streamlit.app/?letter_id={letter_id}",
                 language="text"
             )
 
@@ -176,6 +191,62 @@ def show_letter_page():
 
             st.caption("상대방에게 이 링크를 보내면 앱 없이도 편지를 확인할 수 있습니다.")
 
-   
+    st.divider()
+
+    st.subheader("📬 내가 보낸 편지")
+
+    my_letters = load_my_sent_letters()
+
+    if not my_letters:
+        st.caption("아직 보낸 편지가 없습니다.")
+
+    else:
+        for letter in my_letters:
+            st.info(
+                f"✉ **{letter['title']}**\n\n"
+                f"To. {letter['receiver']}\n\n"
+                f"개봉일: {letter['open_date']}\n\n"
+                f"편지 ID: {letter['letter_id']}"
+            )
+
+            share_url = f"https://slow-letter-app-cgw2dfczedxrtw7r3nocvz.streamlit.app/?letter_id={letter['letter_id']}"
+
+            components.html(
+                f"""
+                <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+
+                <button onclick="shareKakao_{letter['letter_id']}()"
+                    style="
+                        background-color:#FEE500;
+                        color:#000000;
+                        border:none;
+                        border-radius:10px;
+                        padding:10px 16px;
+                        font-weight:bold;
+                        cursor:pointer;
+                        width:100%;
+                    ">
+                    💬 카카오톡으로 공유하기
+                </button>
+
+                <script>
+                    if (!Kakao.isInitialized()) {{
+                        Kakao.init("5a65deb05e055d492b1ffbbcfc89d1ff");
+                    }}
+
+                    function shareKakao_{letter['letter_id']}() {{
+                        Kakao.Share.sendDefault({{
+                            objectType: 'text',
+                            text: '📮 Slow Letter가 도착했습니다.\\n\\n개봉일: {letter["open_date"]}\\n편지 ID: {letter["letter_id"]}',
+                            link: {{
+                                mobileWebUrl: '{share_url}',
+                                webUrl: '{share_url}'
+                            }}
+                        }});
+                    }}
+                </script>
+                """,
+                height=70,
+            )
 if __name__ == "__main__":
     show_letter_page()
