@@ -1,0 +1,96 @@
+[
+  {
+    "receiver": "마이키에게",
+    "open_date": "2026-06-17",
+    "title": "이틀뒤에도 열정으로 이어나갈거라고 믿어",
+    "content": "화이팅해보자 새로운 것을 배우지 않으면 결국 더 힘들어질거야 !",
+    "created_at": "2026-06-15 01:22:44"
+  },
+  {
+    "receiver": "마이키",
+    "open_date": "2026-06-15",
+    "title": "테스트1",
+    "content": "11",
+    "created_at": "2026-06-15 01:43:54"
+  },
+  {
+    "receiver": "마이키",
+    "open_date": "2026-06-15",
+    "title": "테스트1",
+    "content": "11",
+    "created_at": "2026-06-15 01:43:56"
+  },
+  {
+    "receiver": "마이키",
+    "open_date": "2026-06-15",
+    "title": "테스트123",
+    "content": "1123",
+    "created_at": "2026-06-15 01:44:05"
+  },
+  {
+    "sender": "마이키",
+    "receiver": "마이키에게",
+    "open_date": "2026-06-15",
+    "title": "테스트5",
+    "content": "11",
+    "created_at": "2026-06-15 01:58:08"
+  },
+  {
+    "sender": "123",
+    "receiver": "123",
+    "open_date": "2026-06-15",
+    "title": "123",
+    "content": "123",
+    "created_at": "2026-06-15 02:00:18"
+  },
+  {
+    "sender": "124214",
+    "receiver": "1242142",
+    "receiver_contact": "01082791244",
+    "letter_id": "49df49da",
+    "open_date": "2026-06-15",
+    "title": "링크테스트 편지",
+    "content": "이거하고 잘거야",
+    "created_at": "2026-06-15 02:18:48"
+  },
+  {
+    "sender": "우성",
+    "receiver": "나에게",
+    "receiver_contact": "010-8279-1244",
+    "letter_id": "c1b6ab9e",
+    "open_date": "2026-06-15",
+    "title": "12시32분",
+    "content": "ㅁㅁㅁ",
+    "created_at": "2026-06-15 12:33:21"
+  },
+  {
+    "sender": "우성",
+    "receiver": "나에게게게",
+    "receiver_contact": "010-8279-1244",
+    "letter_id": "3ee2ac1b",
+    "open_date": "2026-06-15",
+    "title": "12시34분 밥먹는중 ",
+    "content": "ㅁㅁㅁ",
+    "created_at": "2026-06-15 12:34:20"
+  },
+  {
+    "sender": "마이키",
+    "receiver": "마이키에게",
+    "receiver_contact": "010-8279-1244",
+    "letter_id": "08d277c4",
+    "open_date": "2026-06-15",
+    "title": "12시53분 밥다먹음",
+    "content": "ㅎㅎ",
+    "created_at": "2026-06-15 12:53:47"
+  },
+  {
+    "sender": "마이키",
+    "receiver": "마이키에게 ",
+    "receiver_contact": "010-8279-1244 ",
+    "letter_id": "a5731a61",
+    "open_date": "2026-06-15",
+    "title": "12시53분 밥다먹음 2",
+    "content": "aa",
+    "created_at": "2026-06-15 12:55:08"
+  }
+]
