@@ -1,8 +1,7 @@
 import streamlit as st
-from datetime import date, datetime
 import uuid
 from supabase import create_client
-import streamlit.components.v1 as components
+
 
 
 supabase = create_client(
@@ -30,7 +29,7 @@ def load_my_sent_letters():
         supabase
         .table("letters")
         .select("*")
-        .eq("sender_email", st.user.email)
+        .eq("sender_email", "guest")
         .order("created_at", desc=True)
         .execute()
     )
@@ -160,7 +159,7 @@ def show_letter_page():
 
             new_letter = {
                 "sender": sender,
-                "sender_email": st.user.email,
+                "sender_email": "guest",
                 "receiver": receiver,
                 "receiver_contact": receiver_contact,
                 "letter_id": letter_id,
@@ -206,18 +205,18 @@ def show_letter_page():
             )
 
             share_url = f"https://slow-letter-app-cgw2dfczedxrtw7r3nocvz.streamlit.app/?letter_id={letter['letter_id']}"
-        
+
             st.markdown("### 🔗 카카오톡 · 인스타그램으로 공유하기")
 
-    st.caption(
-        "아래 링크를 복사해서 카카오톡이나 인스타그램 DM으로 보내주세요."
-    )
+            st.caption(
+                "아래 링크를 복사해서 카카오톡이나 인스타그램 DM으로 보내주세요."
+            )
 
-    st.link_button(
-        "💬 공유 링크 열기",
-        share_url
-    )
+            st.link_button(
+                "💬 공유 링크 열기",
+                share_url
+            )
 
-    st.code(share_url, language="text")
+            st.code(share_url, language="text")
 if __name__ == "__main__":
     show_letter_page()
